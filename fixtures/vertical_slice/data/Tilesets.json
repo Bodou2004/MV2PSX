@@ -1,0 +1,50 @@
+[
+  null,
+  {
+    "id": 1,
+    "name": "Overworld & Village",
+    "mode": 0,
+    "tilesetNames": [
+      "World_A1",
+      "World_A2",
+      "World_B",
+      "World_C"
+    ],
+    "flags": [
+      16,
+      0,
+      15,
+      0,
+      15,
+      15,
+      0,
+      15,
+      0,
+      0
+    ],
+    "note": "MV2PSX Fixture Tileset 1: 0=Passable (Grass/Road), 15=Blocked 4-dir (Mountain, Wall, House Roof)"
+  },
+  {
+    "id": 2,
+    "name": "Sanctuary Interior",
+    "mode": 0,
+    "tilesetNames": [
+      "Dungeon_A1",
+      "Dungeon_A2",
+      "Dungeon_B"
+    ],
+    "flags": [
+      16,
+      0,
+      0,
+      0,
+      0,
+      15,
+      0,
+      15,
+      0,
+      0
+    ],
+    "note": "MV2PSX Fixture Tileset 2: 5=Wall (15 blocked), 6=Floor (0 passable), 7=Pillar (15 blocked)"
+  }
+]

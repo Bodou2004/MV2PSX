@@ -2,7 +2,7 @@
 
 El archivo `MAP.BIN` empaqueta la capa de tiles, máscaras de colisión/pasabilidad, tabla de eventos del mapa y cadenas internas locales de forma compacta y directamente direccionable por offsets.
 
-## 1. Estructura del Encabezado (MapHeader) - 36 bytes
+## 1. Estructura del Encabezado (MapHeader) - 38 bytes
 
 ```c
 typedef struct {

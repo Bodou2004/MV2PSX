@@ -10,7 +10,7 @@ import { EventCompiler } from './event_compiler.ts';
 export class MapCompiler {
   private eventCompiler = new EventCompiler();
 
-  public compile(mapId: number, mapData: MVMapData): CompiledMapBinary {
+  public compile(mapId: number, mapData: MVMapData, tileset?: { flags: number[] }): CompiledMapBinary {
     const width = mapData.width;
     const height = mapData.height;
     const tilesetId = mapData.tilesetId || 1;
@@ -30,32 +30,50 @@ export class MapCompiler {
     // Build passability bitmask matrix (width * height bytes)
     // 0x0F = walkable all directions (down: 0x01, left: 0x02, right: 0x04, up: 0x08)
     // 0x00 = blocked/solid wall
+    // Uses Tilesets.json flags if available, otherwise maps standard tile semantics
     const passData = new Uint8Array(totalCells);
+    const getTileFlag = (tileId: number): number => {
+      if (tileset && tileset.flags && tileId < tileset.flags.length) {
+        return tileset.flags[tileId] ?? 0;
+      }
+      // Fallback default flag map
+      if (tileId === 2 || tileId === 4 || tileId === 5 || tileId === 7) {
+        return 0x0f; // Block all 4 directions
+      }
+      return 0x00; // Walkable
+    };
+
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = y * width + x;
         const groundTile = tileLayers[0] ? tileLayers[0][idx] : 1;
         const upperTile = layerCount > 1 && tileLayers[1] ? tileLayers[1][idx] : 0;
 
-        // In our fixture & standard tiles:
-        // Tile 2: mountain/perimeter wall (solid = 0x00)
-        // Tile 4: building roofs (solid = 0x00)
-        // Tile 5: sanctuary stone walls (solid = 0x00)
-        // Tile 7: pillar/columns (solid = 0x00)
-        let isWalkable = true;
-        if (groundTile === 2 || groundTile === 5 || upperTile === 4 || upperTile === 7) {
-          isWalkable = false;
-        }
+        let passMask = 0x0f; // Start with all directions walkable (1: down, 2: left, 4: right, 8: up)
 
-        // Borders of map are solid if edge
-        if (x === 0 || x === width - 1 || y === 0 || y === height - 1) {
-          // If perimeter tile is 2 or 5, solid
-          if (groundTile === 2 || groundTile === 5) {
-            isWalkable = false;
+        const groundFlag = getTileFlag(groundTile);
+        if ((groundFlag & 0x01) !== 0) passMask &= ~0x01;
+        if ((groundFlag & 0x02) !== 0) passMask &= ~0x02;
+        if ((groundFlag & 0x04) !== 0) passMask &= ~0x04;
+        if ((groundFlag & 0x08) !== 0) passMask &= ~0x08;
+
+        if (upperTile > 0) {
+          const upperFlag = getTileFlag(upperTile);
+          // If not a star tile (bit 0x10)
+          if ((upperFlag & 0x10) === 0) {
+            if ((upperFlag & 0x01) !== 0) passMask &= ~0x01;
+            if ((upperFlag & 0x02) !== 0) passMask &= ~0x02;
+            if ((upperFlag & 0x04) !== 0) passMask &= ~0x04;
+            if ((upperFlag & 0x08) !== 0) passMask &= ~0x08;
           }
         }
 
-        passData[idx] = isWalkable ? 0x0f : 0x00;
+        // Map boundary check: if border tile is solid, keep blocked
+        if ((x === 0 || x === width - 1 || y === 0 || y === height - 1) && (groundTile === 2 || groundTile === 5)) {
+          passMask = 0x00;
+        }
+
+        passData[idx] = passMask;
       }
     }
 
@@ -82,15 +100,15 @@ export class MapCompiler {
 
     // Now construct the binary buffer
     // Calculate layout & offsets:
-    // Header: 36 bytes
-    const HEADER_SIZE = 36;
+    // Header: strictly 38 bytes matching MapHeader struct (Section 7.1)
+    const HEADER_SIZE = 38;
     const tileDataOff = HEADER_SIZE;
     const tileDataSize = totalCells * layerCount * 2; // u16 per tile
 
     const passDataOff = tileDataOff + tileDataSize;
     const passDataSize = totalCells; // u8 per cell
 
-    // Pad to 4-byte boundary
+    // Pad to 4-byte boundary for event table
     const passDataEndAligned = (passDataOff + passDataSize + 3) & ~3;
 
     // Event table: 18 bytes per event entry + variable bytecode

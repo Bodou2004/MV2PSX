@@ -86,7 +86,7 @@ export const BinaryHexViewer: React.FC<BinaryHexViewerProps> = ({ maps }) => {
         {activeMap && (
           <div className="mt-4">
             <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-              Encabezado MapHeader Decodificado (36 bytes)
+              Encabezado MapHeader Decodificado (38 bytes)
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
               <div className="p-2.5 bg-slate-950 rounded border border-slate-800">

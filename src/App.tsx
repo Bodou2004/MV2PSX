@@ -19,6 +19,7 @@ import { SourceCodeExport } from './components/SourceCodeExport.tsx';
 import systemFixture from '../fixtures/vertical_slice/data/System.json';
 import map001Fixture from '../fixtures/vertical_slice/data/Map001.json';
 import map002Fixture from '../fixtures/vertical_slice/data/Map002.json';
+import tilesetsFixture from '../fixtures/vertical_slice/data/Tilesets.json';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
@@ -34,7 +35,8 @@ export default function App() {
       [
         { id: 1, data: map001Fixture as any },
         { id: 2, data: map002Fixture as any },
-      ]
+      ],
+      tilesetsFixture as any
     );
   }, []);
 

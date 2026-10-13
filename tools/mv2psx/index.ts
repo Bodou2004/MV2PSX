@@ -21,7 +21,8 @@ export class MV2PSXCompiler {
   public compileProject(
     projectName: string,
     system: SystemData,
-    maps: { id: number; data: MVMapData }[]
+    maps: { id: number; data: MVMapData }[],
+    tilesets?: (any | null)[]
   ): CompilationResult {
     const rawMaps = maps.map((m) => m.data);
     const features = this.scanner.scan(system, rawMaps);
@@ -34,7 +35,8 @@ export class MV2PSXCompiler {
 
     for (const m of maps) {
       try {
-        const compiled = this.mapCompiler.compile(m.id, m.data);
+        const tileset = tilesets && m.data.tilesetId ? tilesets[m.data.tilesetId] : undefined;
+        const compiled = this.mapCompiler.compile(m.id, m.data, tileset);
         compiledMaps.set(m.id, compiled);
 
         const memReport = this.estimator.estimateMap(

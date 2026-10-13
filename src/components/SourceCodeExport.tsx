@@ -187,6 +187,73 @@ bool map_is_passable(int16_t x, int16_t y, uint8_t dir);
 
 #endif /* MVPSX_MAP_LOADER_H */`,
     },
+    'boot.c': {
+      path: 'runtime/core/boot.c',
+      language: 'c',
+      content: `#include "types.h"
+#include "../memory/arena.h"
+#include "../map/map_loader.h"
+#include "../event/event_vm.h"
+#include "../gfx/gpu.h"
+#include "../input/pad.h"
+#include "../data/map001_bin.h"
+
+static uint8_t s_perm_buffer[128 * 1024];
+static uint8_t s_scene_buffer[256 * 1024];
+static uint8_t s_map_buffer[512 * 1024];
+static uint8_t s_scratch_buffer[128 * 1024];
+static uint8_t s_io_buffer[128 * 1024];
+
+int main(void) {
+    arena_init(&g_perm_arena, s_perm_buffer, sizeof(s_perm_buffer), "perm");
+    arena_init(&g_scene_arena, s_scene_buffer, sizeof(s_scene_buffer), "scene");
+    arena_init(&g_map_arena, s_map_buffer, sizeof(s_map_buffer), "map");
+    arena_init(&g_scratch_arena, s_scratch_buffer, sizeof(s_scratch_buffer), "scratch");
+    arena_init(&g_io_arena, s_io_buffer, sizeof(s_io_buffer), "io");
+
+    gpu_init();
+    pad_init();
+    map_load_from_memory(g_map001_bin, g_map001_bin_size);
+
+    while (1) {
+        pad_poll();
+        update_player();
+        render_scene();
+    }
+    return 0;
+}`,
+    },
+    'gpu.h': {
+      path: 'runtime/gfx/gpu.h',
+      language: 'c',
+      content: `#ifndef MVPSX_GPU_H
+#define MVPSX_GPU_H
+
+#include "../core/types.h"
+
+void gpu_init(void);
+void gpu_begin(void);
+void gpu_draw_tile(int16_t screen_x, int16_t screen_y, uint16_t tile_id);
+void gpu_draw_player(int16_t screen_x, int16_t screen_y, uint8_t dir);
+void gpu_flip(void);
+
+#endif /* MVPSX_GPU_H */`,
+    },
+    'pad.h': {
+      path: 'runtime/input/pad.h',
+      language: 'c',
+      content: `#ifndef MVPSX_PAD_H
+#define MVPSX_PAD_H
+
+#include "../core/types.h"
+
+void pad_init(void);
+void pad_poll(void);
+uint16_t pad_get_buttons(void);
+bool pad_button_down(uint16_t button);
+
+#endif /* MVPSX_PAD_H */`,
+    },
     'CMakeLists.txt': {
       path: 'runtime/CMakeLists.txt',
       language: 'cmake',
@@ -201,6 +268,10 @@ include_directories(
     \${CMAKE_CURRENT_SOURCE_DIR}/memory
     \${CMAKE_CURRENT_SOURCE_DIR}/map
     \${CMAKE_CURRENT_SOURCE_DIR}/event
+    \${CMAKE_CURRENT_SOURCE_DIR}/gfx
+    \${CMAKE_CURRENT_SOURCE_DIR}/input
+    \${CMAKE_CURRENT_SOURCE_DIR}/data
+    \${CMAKE_CURRENT_SOURCE_DIR}/../generated
 )
 
 set(CORE_SOURCES
@@ -208,6 +279,9 @@ set(CORE_SOURCES
     memory/arena.c
     map/map_loader.c
     event/event_vm.c
+    gfx/gpu.c
+    input/pad.c
+    data/map001_bin.c
 )
 
 add_executable(game.elf \${CORE_SOURCES})

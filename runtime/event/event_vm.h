@@ -8,6 +8,15 @@
 
 #include "../core/types.h"
 
+/* Connect generated features configuration (Section 4.3 & 5.1) */
+#if defined(__has_include)
+  #if __has_include("features.h")
+    #include "features.h"
+  #elif __has_include("../generated/features.h")
+    #include "../generated/features.h"
+  #endif
+#endif
+
 /* VM execution states */
 #define VM_STATE_INACTIVE       0
 #define VM_STATE_RUNNING        1
@@ -15,10 +24,9 @@
 #define VM_STATE_WAIT_UI        3
 #define VM_STATE_TRANSFER       4
 
-/* Opcodes matching Annex A */
+/* Supported Milestone Opcodes (strictly synchronized with event_compiler.ts) */
 #define OP_END                  0x00
 #define OP_TEXT                 0x01
-#define OP_CHOICE               0x02
 #define OP_SET_SWITCH           0x03
 #define OP_SET_VAR              0x04
 #define OP_VAR_OP               0x05
@@ -27,12 +35,6 @@
 #define OP_JMP                  0x08
 #define OP_WAIT                 0x09
 #define OP_TRANSFER             0x0A
-#define OP_PLAY_SE              0x0B
-#define OP_PLAY_BGM             0x0C
-#define OP_COMMON               0x0D
-#define OP_ITEM_ADD             0x0E
-#define OP_BATTLE               0x0F
-#define OP_NATIVE_CALL          0x10
 
 /* Event VM State structure (Section 9.2) */
 typedef struct {
@@ -54,11 +56,19 @@ typedef struct {
     uint16_t       active_string_id;
 } EventVM;
 
-/* Global state: Switches (bitset) & Variables (int32 array) (Section 10) */
-#define MAX_GLOBAL_SWITCHES     512
-#define MAX_GLOBAL_VARS         128
+/* Global state limits dynamically parameterized by features.h */
+#ifndef MVPSX_MAX_SWITCHES
+#define MVPSX_MAX_SWITCHES     512
+#endif
 
-extern uint8_t g_switches[MAX_GLOBAL_SWITCHES / 8];
+#ifndef MVPSX_MAX_VARIABLES
+#define MVPSX_MAX_VARIABLES    128
+#endif
+
+#define MAX_GLOBAL_SWITCHES     MVPSX_MAX_SWITCHES
+#define MAX_GLOBAL_VARS         MVPSX_MAX_VARIABLES
+
+extern uint8_t g_switches[(MAX_GLOBAL_SWITCHES + 7) / 8];
 extern int32_t g_variables[MAX_GLOBAL_VARS];
 
 void vm_init(EventVM *vm);

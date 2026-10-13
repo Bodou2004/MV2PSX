@@ -14,6 +14,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/map
     ${CMAKE_CURRENT_SOURCE_DIR}/event
     ${CMAKE_CURRENT_SOURCE_DIR}/gfx
+    ${CMAKE_CURRENT_SOURCE_DIR}/input
+    ${CMAKE_CURRENT_SOURCE_DIR}/data
     ${CMAKE_CURRENT_SOURCE_DIR}/ui
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated
 )
@@ -24,6 +26,9 @@ set(CORE_SOURCES
     memory/arena.c
     map/map_loader.c
     event/event_vm.c
+    gfx/gpu.c
+    input/pad.c
+    data/map001_bin.c
 )
 
 add_executable(game.elf ${CORE_SOURCES})

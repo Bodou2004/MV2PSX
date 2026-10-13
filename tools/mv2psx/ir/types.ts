@@ -64,6 +64,15 @@ export interface MVEvent {
   pages: MVEventPage[];
 }
 
+export interface TilesetData {
+  id: number;
+  name: string;
+  mode: number;
+  tilesetNames: string[];
+  flags: number[];
+  note?: string;
+}
+
 export interface MVMapData {
   displayName?: string;
   width: number;

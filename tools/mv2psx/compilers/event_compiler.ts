@@ -9,7 +9,6 @@ import { MVEventCommand, MVEventPage, CompiledEventBytecode } from '../ir/types.
 export const OPCODES = {
   END: 0x00,
   TEXT: 0x01,
-  CHOICE: 0x02,
   SET_SWITCH: 0x03,
   SET_VAR: 0x04,
   VAR_OP: 0x05,
@@ -18,12 +17,6 @@ export const OPCODES = {
   JMP: 0x08,
   WAIT: 0x09,
   TRANSFER: 0x0a,
-  PLAY_SE: 0x0b,
-  PLAY_BGM: 0x0c,
-  COMMON: 0x0d,
-  ITEM_ADD: 0x0e,
-  BATTLE: 0x0f,
-  NATIVE_CALL: 0x10,
 } as const;
 
 export class EventCompiler {
@@ -158,33 +151,13 @@ export class EventCompiler {
         continue;
       }
 
-      // Code 250: Play SE: [{ name, volume, pitch, pan }]
-      if (cmd.code === 250) {
-        const seName = cmd.parameters[0]?.name || 'se';
-        const seId = this.internString(seName);
-        writeU8(OPCODES.PLAY_SE);
-        writeU16(seId);
-        i++;
-        continue;
-      }
-
-      // Code 241: Play BGM
-      if (cmd.code === 241) {
-        const bgmName = cmd.parameters[0]?.name || 'bgm';
-        const bgmId = this.internString(bgmName);
-        writeU8(OPCODES.PLAY_BGM);
-        writeU16(bgmId);
-        i++;
-        continue;
-      }
-
       // Code 0: End of block
       if (cmd.code === 0) {
         i++;
         continue;
       }
 
-      // Unhandled / editorial or unsupported codes are skipped cleanly
+      // Unhandled / unsupported codes are skipped cleanly for this milestone
       i++;
     }
 

@@ -4,7 +4,7 @@
 
 #include "event_vm.h"
 
-uint8_t g_switches[MAX_GLOBAL_SWITCHES / 8];
+uint8_t g_switches[(MAX_GLOBAL_SWITCHES + 7) / 8];
 int32_t g_variables[MAX_GLOBAL_VARS];
 
 void vm_init(EventVM *vm) {
