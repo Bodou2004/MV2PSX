@@ -2,7 +2,7 @@
 # Adheres to Section 5.1 (Link-time feature stripping) and Section 18 (PSn00bSDK integration)
 # Targets: MIPS R3000A, PS-X EXE format, mkpsxiso BIN/CUE generation
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 project(MV2PSX_GAME C)
 
 set(CMAKE_C_STANDARD 99)
@@ -35,10 +35,8 @@ set(CORE_SOURCES
 # Check if running under PSn00bSDK MIPS toolchain
 if(COMMAND psn00bsdk_add_executable)
     # 1. Create PS1 executable target with GP-relative addressing (GPREL)
+    # psn00bsdk_add_executable() automatically links standard PSn00bSDK libraries
     psn00bsdk_add_executable(game GPREL ${CORE_SOURCES})
-
-    # 2. Link standard PSn00bSDK hardware libraries (official target names)
-    target_link_libraries(game PRIVATE psxgpu psxetc psxcd psxspu psxapi psxpad)
 
     # 3. Copy mkpsxiso configuration and boot descriptor into binary directory
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/system.cnf ${CMAKE_CURRENT_BINARY_DIR}/system.cnf COPYONLY)

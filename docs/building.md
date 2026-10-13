@@ -8,9 +8,9 @@ Este documento describe la ruta de compilación reproducible para generar ejecut
 
 - **PSn00bSDK** (v0.22+ recomendado con toolchain MIPS `mipsel-none-elf`):
   [Repositorio Oficial de PSn00bSDK](https://github.com/Lameguy64/PSn00bSDK)
-- **CMake** 3.15 o superior
+- **CMake** 3.21 o superior (alineado con la instalación recomendada por PSn00bSDK)
 - **mkpsxiso** (incluido en las utilidades de PSn00bSDK o instalable por separado)
-- **Emulador**: DuckStation o Mednafen
+- **Emulador de destino**: DuckStation o Mednafen
 
 ---
 
@@ -40,15 +40,16 @@ Tras completar la orden anterior, el directorio `build/` contendrá:
 |---|---|
 | `game.elf` | Binario ELF MIPS con símbolos para depuración GDB |
 | `game.exe` | Ejecutable de PlayStation con encabezado PS-X de 2048 bytes (0x800) |
+| `game.map` | Archivo de mapa del linker para análisis de secciones y memoria (Sección 18.1 del PDF) |
 | `game.bin` | Imagen de disco CD-ROM (Track 01 Mode 2/Form 1, 2352 bytes/sector) |
-| `game.cue` | Hoja CUE describiendo las pistas del disco |
+| `game.cue` | Hoja CUE describiendo las pistas del disco para emuladores |
 
 ---
 
-## 4. Ejecución en DuckStation
+## 4. Estado de Validación y Ejecución
 
-Para arrancar el juego en DuckStation:
-1. Abre DuckStation.
-2. Selecciona **Archivo $\rightarrow$ Iniciar Imagen de Disco** (`Start Disc Image`).
-3. Elige `build/game.cue` (o alternativamente `build/game.exe` mediante **Iniciar Archivo Ejecutable**).
-4. El mapa inicial (Aldea de Origen) aparecerá a 320×240 con el jugador en $(9, 10)$ moviéndose con el D-Pad sobre los tiles compilados desde `MAP001.BIN`.
+Para mantener un rigor técnico estricto:
+
+- **Build configurado:** `runtime/CMakeLists.txt` validado para CMake 3.21 con `psn00bsdk_add_executable()`, `system.cnf` e `iso.xml`.
+- **Build compilado realmente:** Se genera al invocar `cmake --build build` en una máquina con el toolchain PSn00bSDK instalado.
+- **Ejecución en DuckStation:** El formato BIN/CUE y el ejecutable PS-X son técnicamente compatibles con DuckStation; la validación en hardware/emulador se realiza al cargar la imagen `build/game.cue` generada.

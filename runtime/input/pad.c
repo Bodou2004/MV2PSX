@@ -7,7 +7,7 @@
 static uint16_t s_pad_state = 0;
 static uint16_t s_pad_prev = 0;
 
-#if defined(__PSX__) || defined(PSX)
+#if defined(PSN00BSDK)
 #include <psxpad.h>
 
 static uint8_t s_pad_buff[2][34];

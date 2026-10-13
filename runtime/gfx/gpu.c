@@ -5,7 +5,7 @@
 
 #include "gpu.h"
 
-#if defined(__PSX__) || defined(PSX)
+#if defined(PSN00BSDK)
 #include <psxgpu.h>
 #include <psxetc.h>
 

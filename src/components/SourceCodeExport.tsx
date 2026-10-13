@@ -257,7 +257,7 @@ bool pad_button_down(uint16_t button);
     'CMakeLists.txt': {
       path: 'runtime/CMakeLists.txt',
       language: 'cmake',
-      content: `cmake_minimum_required(VERSION 3.15)
+      content: `cmake_minimum_required(VERSION 3.21)
 project(MV2PSX_GAME C)
 
 set(CMAKE_C_STANDARD 99)
@@ -287,7 +287,6 @@ set(CORE_SOURCES
 if(COMMAND psn00bsdk_add_executable)
     # Official PSn00bSDK API
     psn00bsdk_add_executable(game GPREL \${CORE_SOURCES})
-    target_link_libraries(game PRIVATE psxgpu psxetc psxcd psxspu psxapi psxpad)
 
     configure_file(\${CMAKE_CURRENT_SOURCE_DIR}/system.cnf \${CMAKE_CURRENT_BINARY_DIR}/system.cnf COPYONLY)
     configure_file(\${CMAKE_CURRENT_SOURCE_DIR}/iso.xml \${CMAKE_CURRENT_BINARY_DIR}/iso.xml COPYONLY)
