@@ -1,0 +1,19 @@
+{
+  "gameTitle": "MV2PSX Vertical Slice",
+  "versionId": 10001,
+  "startMapId": 1,
+  "startX": 9,
+  "startY": 10,
+  "partyMembers": [1],
+  "switches": [
+    "",
+    "Stone_Door_Unlocked",
+    "Village_Discovered"
+  ],
+  "variables": [
+    "",
+    "Quest_Stage",
+    "Relic_Count"
+  ],
+  "tileSize": 48
+}

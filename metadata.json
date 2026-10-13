@@ -1,0 +1,6 @@
+{
+  "name": "MV2PSX - RPG Maker MV to PlayStation 1 Compiler & Runtime",
+  "description": "Offline compiler and modular PSn00bSDK C runtime environment converting RPG Maker MV projects to PlayStation 1 binary formats, Event VM bytecode, and VRAM layouts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

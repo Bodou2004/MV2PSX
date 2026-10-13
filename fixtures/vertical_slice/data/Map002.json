@@ -1,0 +1,86 @@
+{
+  "displayName": "Santuario Interior (16x12)",
+  "width": 16,
+  "height": 12,
+  "tilesetId": 2,
+  "scrollType": 0,
+  "specifyBattleback": false,
+  "battleback1Name": "",
+  "battleback2Name": "",
+  "autoplayBgm": true,
+  "bgm": { "name": "Dungeon1", "pan": 0, "pitch": 100, "volume": 85 },
+  "data": [
+    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,7,7,6,6,6,6,6,6,7,7,6,6,5,
+    5,6,6,7,7,6,6,6,6,6,6,7,7,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,5,
+    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5
+  ],
+  "events": [
+    null,
+    {
+      "id": 1,
+      "name": "Portal de Retorno",
+      "x": 8,
+      "y": 11,
+      "pages": [
+        {
+          "conditions": {
+            "switch1Valid": false,
+            "switch1Id": 1
+          },
+          "image": {
+            "characterName": "",
+            "characterIndex": 0,
+            "direction": 2,
+            "pattern": 0
+          },
+          "trigger": 1,
+          "priorityType": 0,
+          "list": [
+            { "code": 101, "indent": 0, "parameters": ["", 0, 0, 2] },
+            { "code": 401, "indent": 0, "parameters": ["Regresando a la Aldea de Origen..."] },
+            { "code": 201, "indent": 0, "parameters": [0, 1, 9, 2, 0, 0] },
+            { "code": 0, "indent": 0, "parameters": [] }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Cristal Ancestral",
+      "x": 8,
+      "y": 4,
+      "pages": [
+        {
+          "conditions": {
+            "switch1Valid": false,
+            "switch1Id": 1
+          },
+          "image": {
+            "characterName": "Actor2",
+            "characterIndex": 1,
+            "direction": 2,
+            "pattern": 1
+          },
+          "trigger": 0,
+          "priorityType": 1,
+          "list": [
+            { "code": 101, "indent": 0, "parameters": ["", 0, 0, 2] },
+            { "code": 401, "indent": 0, "parameters": ["Has alcanzado el Cristal de la PS1."] },
+            { "code": 401, "indent": 0, "parameters": ["La Map Arena fue reseteada y recargada"] },
+            { "code": 401, "indent": 0, "parameters": ["sin fragmentacion de memoria!"] },
+            { "code": 0, "indent": 0, "parameters": [] }
+          ]
+        }
+      ]
+    }
+  ]
+}
