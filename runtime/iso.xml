@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iso_project image_name="game.bin" cue_sheet="game.cue">
+    <track type="data">
+        <identifiers
+            system="PLAYSTATION"
+            application="PLAYSTATION"
+            volume="MV2PSX_GAME"
+            volume_set="MV2PSX"
+            publisher="MV2PSX"
+            data_preparer="MV2PSX"
+            copyright="MV2PSX"
+        />
+        <directory_tree>
+            <file name="SYSTEM.CNF" type="data" source="system.cnf" />
+            <file name="GAME.EXE" type="data" source="game.exe" />
+        </directory_tree>
+    </track>
+</iso_project>

@@ -1,12 +1,13 @@
 # MV2PSX PSn00bSDK CMake Build Configuration
 # Adheres to Section 5.1 (Link-time feature stripping) and Section 18 (PSn00bSDK integration)
+# Targets: MIPS R3000A, PS-X EXE format, mkpsxiso BIN/CUE generation
 
 cmake_minimum_required(VERSION 3.15)
 project(MV2PSX_GAME C)
 
 set(CMAKE_C_STANDARD 99)
 
-# Include generated features configuration
+# Include directories for MV2PSX core subsystems
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/core
@@ -31,18 +32,23 @@ set(CORE_SOURCES
     data/map001_bin.c
 )
 
-add_executable(game.elf ${CORE_SOURCES})
+# Check if running under PSn00bSDK MIPS toolchain
+if(COMMAND psn00bsdk_add_executable)
+    # 1. Create PS1 executable target with GP-relative addressing (GPREL)
+    psn00bsdk_add_executable(game GPREL ${CORE_SOURCES})
 
-# Target link libraries for PSn00bSDK
-target_link_libraries(game.elf PRIVATE psx_gpu psx_etc psx_cd psx_spu)
+    # 2. Link standard PSn00bSDK hardware libraries (official target names)
+    target_link_libraries(game PRIVATE psxgpu psxetc psxcd psxspu psxapi psxpad)
 
-# PSn00bSDK CD-ROM image generation (Section 18)
-# If running under PSn00bSDK toolchain:
-if(COMMAND psn00bsdk_add_cd_image)
-    psn00bsdk_add_cd_image(game_cd
-        TARGET game.elf
-        CUE "game.cue"
-        BIN "game.bin"
-        SYSTEM_CNF "system.cnf"
-    )
+    # 3. Copy mkpsxiso configuration and boot descriptor into binary directory
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/system.cnf ${CMAKE_CURRENT_BINARY_DIR}/system.cnf COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/iso.xml ${CMAKE_CURRENT_BINARY_DIR}/iso.xml COPYONLY)
+
+    # 4. Generate bootable CD image (game.bin / game.cue) via mkpsxiso
+    if(COMMAND psn00bsdk_add_cd_image)
+        psn00bsdk_add_cd_image(game_cd game ${CMAKE_CURRENT_BINARY_DIR}/iso.xml DEPENDS game)
+    endif()
+else()
+    # Host PC native compilation / test harness fallback
+    add_executable(game.elf ${CORE_SOURCES})
 endif()

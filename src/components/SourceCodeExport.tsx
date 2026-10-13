@@ -284,17 +284,50 @@ set(CORE_SOURCES
     data/map001_bin.c
 )
 
-add_executable(game.elf \${CORE_SOURCES})
-target_link_libraries(game.elf PRIVATE psx_gpu psx_etc psx_cd psx_spu)
+if(COMMAND psn00bsdk_add_executable)
+    # Official PSn00bSDK API
+    psn00bsdk_add_executable(game GPREL \${CORE_SOURCES})
+    target_link_libraries(game PRIVATE psxgpu psxetc psxcd psxspu psxapi psxpad)
 
-if(COMMAND psn00bsdk_add_cd_image)
-    psn00bsdk_add_cd_image(game_cd
-        TARGET game.elf
-        CUE "game.cue"
-        BIN "game.bin"
-        SYSTEM_CNF "system.cnf"
-    )
+    configure_file(\${CMAKE_CURRENT_SOURCE_DIR}/system.cnf \${CMAKE_CURRENT_BINARY_DIR}/system.cnf COPYONLY)
+    configure_file(\${CMAKE_CURRENT_SOURCE_DIR}/iso.xml \${CMAKE_CURRENT_BINARY_DIR}/iso.xml COPYONLY)
+
+    if(COMMAND psn00bsdk_add_cd_image)
+        psn00bsdk_add_cd_image(game_cd game \${CMAKE_CURRENT_BINARY_DIR}/iso.xml DEPENDS game)
+    endif()
+else()
+    add_executable(game.elf \${CORE_SOURCES})
 endif()`,
+    },
+    'iso.xml': {
+      path: 'runtime/iso.xml',
+      language: 'xml',
+      content: `<?xml version="1.0" encoding="UTF-8"?>
+<iso_project image_name="game.bin" cue_sheet="game.cue">
+    <track type="data">
+        <identifiers
+            system="PLAYSTATION"
+            application="PLAYSTATION"
+            volume="MV2PSX_GAME"
+            volume_set="MV2PSX"
+            publisher="MV2PSX"
+            data_preparer="MV2PSX"
+            copyright="MV2PSX"
+        />
+        <directory_tree>
+            <file name="SYSTEM.CNF" type="data" source="system.cnf" />
+            <file name="GAME.EXE" type="data" source="game.exe" />
+        </directory_tree>
+    </track>
+</iso_project>`,
+    },
+    'system.cnf': {
+      path: 'runtime/system.cnf',
+      language: 'ini',
+      content: `BOOT=cdrom:\\GAME.EXE;1
+TCB=4
+EVENT=16
+STACK=801FFF00`,
     },
   };
 
